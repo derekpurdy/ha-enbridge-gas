@@ -230,31 +230,41 @@ def _validate_periods(periods: list[BillingPeriod]) -> list[BillingPeriod]:
 def build_hourly_statistics(
     periods: list[BillingPeriod], local_timezone: tzinfo
 ) -> list[HourlyStatistic]:
-    """Spread each total evenly over its inclusive local billing dates."""
+    """Spread each total evenly across local dates and each date's hours."""
     statistics: list[HourlyStatistic] = []
     cumulative = Decimal(0)
 
     for period in periods:
-        local_start = datetime.combine(period.start, time.min, local_timezone)
-        local_end = datetime.combine(
-            period.end + timedelta(days=1), time.min, local_timezone
-        )
-        start_utc = local_start.astimezone(timezone.utc)
-        end_utc = local_end.astimezone(timezone.utc)
-        hours = int((end_utc - start_utc).total_seconds() // 3600)
-        if len(statistics) + hours > MAX_STATISTIC_HOURS:
-            raise ExportError(
-                "This export spans too many hours to import in one upload"
-            )
+        day_count = (period.end - period.start).days + 1
+        daily_consumption = period.consumption_m3 / day_count
 
-        hourly_consumption = period.consumption_m3 / hours
-        for hour in range(hours):
-            cumulative += hourly_consumption
-            statistics.append(
-                {
-                    "start": start_utc + timedelta(hours=hour),
-                    "sum": float(cumulative),
-                }
+        for day_offset in range(day_count):
+            local_start = datetime.combine(
+                period.start + timedelta(days=day_offset),
+                time.min,
+                local_timezone,
             )
+            local_end = datetime.combine(
+                period.start + timedelta(days=day_offset + 1),
+                time.min,
+                local_timezone,
+            )
+            start_utc = local_start.astimezone(timezone.utc)
+            end_utc = local_end.astimezone(timezone.utc)
+            hours = int((end_utc - start_utc).total_seconds() // 3600)
+            if len(statistics) + hours > MAX_STATISTIC_HOURS:
+                raise ExportError(
+                    "This export spans too many hours to import in one upload"
+                )
+
+            hourly_consumption = daily_consumption / hours
+            for hour in range(hours):
+                cumulative += hourly_consumption
+                statistics.append(
+                    {
+                        "start": start_utc + timedelta(hours=hour),
+                        "sum": float(cumulative),
+                    }
+                )
 
     return statistics

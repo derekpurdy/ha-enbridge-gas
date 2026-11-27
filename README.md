@@ -1,5 +1,11 @@
 # Enbridge Gas Usage Import
 
+[![Add to Home Assistant][ha-badge]][ha-config]
+
+[ha-badge]: https://my.home-assistant.io/badges/config_flow_start.svg
+[ha-config]:
+  https://my.home-assistant.io/redirect/config_flow_start/?domain=enbridge_gas
+
 Import Enbridge Gas invoice history into Home Assistant as an external gas
 statistic that can be selected in the Energy dashboard.
 
@@ -22,7 +28,8 @@ are not supported.
 
 1. Add this GitHub repository as a custom integration repository in the
    Home Assistant Marketplace, then install **Enbridge Gas Usage Import**.
-2. Add **Enbridge Gas Usage Import** from **Settings > Devices & services**.
+2. Select the **Add to Home Assistant** button above to open the integration
+   setup flow. The integration must be installed first.
 3. Open **Enbridge Gas** in the sidebar and upload the CSV or XML export.
 4. In the Energy dashboard settings, add
    `enbridge_gas:gas_usage` as a gas source.
@@ -46,10 +53,14 @@ the same statistic.
 ## Historical data handling
 
 Enbridge invoice exports provide a total for each billing period, not daily or
-hourly readings. The importer distributes each period's total evenly over its
-inclusive billing dates and across the hours in those dates. This preserves
-the billing-period total and makes it usable by the Energy dashboard, but
-hourly and daily values are estimates rather than meter readings.
+hourly readings. The importer divides each period's total evenly across its
+inclusive billing dates, then across the actual hours in each date. This keeps
+daily estimates consistent across daylight-saving changes and preserves the
+billing-period total. Since the export has no daily readings, dates in the
+same billing period will have similar estimated usage; actual daily variation
+cannot be inferred. The hourly and daily values are estimates, not meter
+readings. After updating the integration's allocation logic, upload the same
+export again to replace matching historical statistics.
 
 The uploaded file is parsed in memory and is not saved. Home Assistant
 Recorder retains the resulting gas statistics.

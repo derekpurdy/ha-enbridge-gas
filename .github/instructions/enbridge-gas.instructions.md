@@ -11,8 +11,9 @@ applyTo: "**/*.py"
 - Validate date ranges, consumption values, overlapping periods, file size,
   and supported formats explicitly.
 - Preserve the total billed cubic metres when converting billing periods to
-  hourly cumulative statistics. Use the configured Home Assistant time zone,
-  including daylight-saving transitions.
+  hourly cumulative statistics. Allocate evenly per local date before
+  distributing each date's total across its hours, using the configured
+  Home Assistant time zone and accounting for daylight-saving transitions.
 - Use synthetic fixtures only. Do not commit Enbridge account numbers, names,
   addresses, or real invoice exports.
 - Add focused tests for parser behavior changes and run
