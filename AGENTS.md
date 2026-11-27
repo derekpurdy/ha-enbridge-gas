@@ -15,8 +15,8 @@ tests are in `tests/`.
   numbers, customer names, service addresses, or raw exports. Use synthetic
   test data only.
 - Validate unsupported or malformed input explicitly. Preserve billing totals
-  and clearly describe estimated hourly usage derived from billing-period
-  totals.
+  and clearly describe estimated daily/hourly usage derived from
+  billing-period totals.
 - Do not describe XML support as verified without a representative Enbridge
   XML sample and a corresponding test.
 - Update the README when import behavior or supported formats change.

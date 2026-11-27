@@ -23,8 +23,9 @@ historical statistic generation, or the corresponding import documentation.
    period ordering, and duplicate or overlapping periods. Return actionable
    errors for invalid input.
 5. Ensure period totals remain unchanged in cumulative external statistics.
-   Treat billing end dates as inclusive and use Home Assistant's configured
-   time zone when expanding dates into hours.
+   Treat billing end dates as inclusive, distribute usage evenly by local
+   calendar date, and use Home Assistant's configured time zone when expanding
+   dates into hours.
 6. Update the README when supported formats, installation, errors, or
    estimation behavior changes.
 7. Add focused synthetic tests and run:
@@ -42,5 +43,5 @@ historical statistic generation, or the corresponding import documentation.
   real Enbridge XML sample has not yet verified this assumption.
 - `.xlsx` is not supported.
 - Enbridge provides billing-period totals, not hourly readings. Hourly values
-  are estimated evenly across the inclusive period and must be described as
+  are estimated from even daily allocations and must be described as
   estimates.

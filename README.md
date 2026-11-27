@@ -46,10 +46,14 @@ the same statistic.
 ## Historical data handling
 
 Enbridge invoice exports provide a total for each billing period, not daily or
-hourly readings. The importer distributes each period's total evenly over its
-inclusive billing dates and across the hours in those dates. This preserves
-the billing-period total and makes it usable by the Energy dashboard, but
-hourly and daily values are estimates rather than meter readings.
+hourly readings. The importer divides each period's total evenly across its
+inclusive billing dates, then across the actual hours in each date. This keeps
+daily estimates consistent across daylight-saving changes and preserves the
+billing-period total. Since the export has no daily readings, dates in the
+same billing period will have similar estimated usage; actual daily variation
+cannot be inferred. The hourly and daily values are estimates, not meter
+readings. After updating the integration's allocation logic, upload the same
+export again to replace matching historical statistics.
 
 The uploaded file is parsed in memory and is not saved. Home Assistant
 Recorder retains the resulting gas statistics.

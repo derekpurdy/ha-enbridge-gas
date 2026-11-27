@@ -127,6 +127,30 @@ class ParseExportTests(unittest.TestCase):
         self.assertEqual(len(fall_stats), 25)
         self.assertEqual(fall_stats[-1]["sum"], 25.0)
 
+    def test_daily_totals_are_equal_across_daylight_saving_time(self):
+        """DST changes do not change the estimated usage for a calendar day."""
+        periods = parse_export(
+            "invoice.csv",
+            "Billed From,Billed To,Consumption M3\n"
+            "03/07/2026,03/09/2026,30\n",
+        )
+        local_timezone = ZoneInfo("America/Toronto")
+        statistics = build_hourly_statistics(periods, local_timezone)
+
+        daily_totals = {}
+        previous_sum = 0.0
+        for statistic in statistics:
+            daily_total = daily_totals.setdefault(
+                statistic["start"].astimezone(local_timezone).date(), 0.0
+            )
+            delta = statistic["sum"] - previous_sum
+            daily_totals[
+                statistic["start"].astimezone(local_timezone).date()
+            ] = daily_total + delta
+            previous_sum = statistic["sum"]
+
+        self.assertEqual(list(daily_totals.values()), [10.0, 10.0, 10.0])
+
 
 if __name__ == "__main__":
     unittest.main()

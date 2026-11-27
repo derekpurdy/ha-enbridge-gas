@@ -19,9 +19,9 @@ the Energy dashboard. The implementation is under
 - Validate the file format and billing data explicitly. Reject malformed or
   ambiguous data with a useful error rather than silently skipping rows.
 - Preserve the billed volume when generating statistics. The integration
-  estimates hourly use evenly across inclusive billing dates because the
-  invoice export supplies period totals, not interval readings. Keep that
-  limitation clear in user-facing documentation.
+  distributes each period evenly across inclusive local dates and then across
+  each date's hours because invoices provide period totals, not interval
+  readings. Keep that limitation clear in user-facing documentation.
 - Do not claim verified XML compatibility without a representative Enbridge
   XML sample and a test for its schema.
 - Avoid new runtime dependencies unless Home Assistant does not already
