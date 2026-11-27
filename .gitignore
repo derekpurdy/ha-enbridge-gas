@@ -1,0 +1,4 @@
+/InvoiceExport-*.csv
+/InvoiceExport-*.xlsx
+__pycache__/
+*.py[cod]
